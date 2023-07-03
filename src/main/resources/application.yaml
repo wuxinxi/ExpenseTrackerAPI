@@ -1,0 +1,26 @@
+server:
+  port: 8088
+  compression:
+    enabled: true
+
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/expensetracker?characterEncoding=utf-8&useSSL=false
+    username: root
+    password: 1234
+
+
+jwt:
+  secret: test-cnda-secret
+  accessExpiration: 100
+  refreshExpiration: 300
+
+
+mybatis-plus:
+  global-config:
+    db-config:
+      table-prefix: t_
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
