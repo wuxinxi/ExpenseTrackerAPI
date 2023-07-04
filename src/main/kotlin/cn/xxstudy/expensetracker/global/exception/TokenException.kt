@@ -7,4 +7,5 @@ import cn.xxstudy.expensetracker.constant.HttpCode
  * @author: LovelyCoder
  * @remark:
  */
-class TokenException :AppException(HttpCode.TOKEN_ERROR.code,HttpCode.TOKEN_ERROR.message)
+class TokenException(code: Int = HttpCode.TOKEN_ERROR.code, message: String = HttpCode.TOKEN_ERROR.message) :
+    AppException(code, message)

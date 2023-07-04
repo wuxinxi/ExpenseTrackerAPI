@@ -1,21 +1,38 @@
 package cn.xxstudy.expensetracker.core.services.user;
 
+import cn.xxstudy.expensetracker.constant.Constants;
+import cn.xxstudy.expensetracker.constant.HttpCode;
 import cn.xxstudy.expensetracker.core.mapper.UserMapper;
+import cn.xxstudy.expensetracker.data.bean.TokenData;
 import cn.xxstudy.expensetracker.data.model.RequestLoginModel;
 import cn.xxstudy.expensetracker.data.model.RequestUserModel;
+import cn.xxstudy.expensetracker.data.model.ResponseUserModel;
+import cn.xxstudy.expensetracker.data.model.Token;
 import cn.xxstudy.expensetracker.data.table.User;
+import cn.xxstudy.expensetracker.global.exception.TokenException;
+import cn.xxstudy.expensetracker.utils.TokenHelper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @Service
 public class UserService extends ServiceImpl<UserMapper, User> implements IUserService {
 
     private final UserMapper userMapper;
 
-    public UserService(UserMapper userMapper) {
+    private final TokenHelper tokenHelper;
+
+    public UserService(UserMapper userMapper, TokenHelper tokenHelper) {
         this.userMapper = userMapper;
+        this.tokenHelper = tokenHelper;
     }
 
     @Override
@@ -34,9 +51,35 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IUserS
 
     @Override
     @Nullable
-    public User login(RequestLoginModel loginModel) {
+    public ResponseUserModel login(RequestLoginModel loginModel) {
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getUserEmail, loginModel.getUserEmail()).eq(User::getUserPassword, loginModel.getUserPassword());
-        return userMapper.selectOne(queryWrapper);
+        User user = userMapper.selectOne(queryWrapper);
+        if (user == null) {
+            return null;
+        }
+        ResponseUserModel userModel = new ResponseUserModel(user);
+        userModel.setToken(new Token(tokenHelper.generateAccessToken(user.getId()), tokenHelper.generateRefreshToken(user.getId())));
+        return userModel;
+    }
+
+    @Override
+    @Nullable
+    public String refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        String authorization = request.getHeader(Constants.AUTHORIZATION);
+        if (StringUtils.isBlank(authorization)) {
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            throw new TokenException(HttpCode.TOKEN_ERROR.getCode(), "缺少Authorization请求头");
+        }
+        TokenData tokenData;
+        try {
+            tokenData = tokenHelper.parseToken(authorization);
+        } catch (ExpiredJwtException e) {
+            throw new TokenException(HttpCode.REFRESH_TOKEN_ERROR.getCode(), HttpCode.REFRESH_TOKEN_ERROR.getMessage());
+        }
+        return Optional.of(tokenData)
+                .filter(TokenData::isValidRefreshToken)
+                .map(data -> tokenHelper.generateAccessToken(data.getId()))
+                .orElseThrow(() -> new TokenException(HttpCode.REFRESH_TOKEN_ERROR.getCode(), HttpCode.REFRESH_TOKEN_ERROR.getMessage()));
     }
 }

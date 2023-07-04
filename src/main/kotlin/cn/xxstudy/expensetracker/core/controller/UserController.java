@@ -1,5 +1,7 @@
 package cn.xxstudy.expensetracker.core.controller;
 
+import cn.xxstudy.expensetracker.annotation.TokenRequired;
+import cn.xxstudy.expensetracker.constant.Constants;
 import cn.xxstudy.expensetracker.constant.HttpCode;
 import cn.xxstudy.expensetracker.core.services.user.UserService;
 import cn.xxstudy.expensetracker.data.Response;
@@ -7,12 +9,18 @@ import cn.xxstudy.expensetracker.data.model.RequestLoginModel;
 import cn.xxstudy.expensetracker.data.model.RequestUserModel;
 import cn.xxstudy.expensetracker.data.model.ResponseUserModel;
 import cn.xxstudy.expensetracker.data.model.Token;
+import cn.xxstudy.expensetracker.data.table.TransactionExpense;
 import cn.xxstudy.expensetracker.data.table.User;
 import cn.xxstudy.expensetracker.utils.TokenHelper;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 /**
  * @date: 2023/7/3 20:56
@@ -24,27 +32,29 @@ public class UserController {
 
     private final UserService userService;
 
-    private final TokenHelper tokenHelper;
-
-    public UserController(UserService userService, TokenHelper tokenHelper) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.tokenHelper = tokenHelper;
     }
 
     @PostMapping("/register")
-    public Response<User>register(@RequestBody @Validated RequestUserModel model){
+    public Response<User> register(@RequestBody @Validated RequestUserModel model) {
         User user = userService.register(model);
-        if(user==null) return Response.failed(HttpCode.REGISTER_ERROR);
-        return Response.success(user);
+        return Optional.ofNullable(user)
+                .map(Response::success)
+                .orElse(Response.failed(HttpCode.REGISTER_ERROR));
     }
 
     @PostMapping("/login")
-    public Response<ResponseUserModel>login(@RequestBody @Validated RequestLoginModel model){
-        User user = userService.login(model);
-        if(user==null)return Response.failed(HttpCode.LOGIN_ERROR);
+    public Response<ResponseUserModel> login(@RequestBody @Validated RequestLoginModel model) {
+        ResponseUserModel userModel = userService.login(model);
+        return Optional.ofNullable(userModel)
+                .map(Response::success)
+                .orElse(Response.failed(HttpCode.LOGIN_ERROR));
+    }
 
-        ResponseUserModel userModel = new ResponseUserModel(user);
-        userModel.setToken(new Token(tokenHelper.generateAccessToken(user.getId()),tokenHelper.generateRefreshToken(user.getId())));
-        return Response.success(userModel);
+    @GetMapping("/refreshToken")
+    public Response<String> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        String accessToken = userService.refreshToken(request, response);
+        return Response.success(accessToken);
     }
 }

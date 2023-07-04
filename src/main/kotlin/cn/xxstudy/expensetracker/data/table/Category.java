@@ -1,5 +1,6 @@
 package cn.xxstudy.expensetracker.data.table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 /**
@@ -8,6 +9,7 @@ import lombok.Data;
  * @remark:
  */
 @Data
+@JsonIgnoreProperties({"userId"})
 public class Category {
     private Long id;
     private Long userId;

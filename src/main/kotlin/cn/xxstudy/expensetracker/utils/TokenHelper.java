@@ -1,6 +1,9 @@
 package cn.xxstudy.expensetracker.utils;
 
+import cn.xxstudy.expensetracker.constant.Constants;
+import cn.xxstudy.expensetracker.data.bean.TokenData;
 import cn.xxstudy.expensetracker.global.JwtConfig;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
@@ -24,17 +27,18 @@ public class TokenHelper {
     }
 
     public String generateRefreshToken(Long id) {
-        return generateToken(id, config.getRefreshExpiration());
+        return generateToken(id, config.getRefreshExpiration(), TokenType.REFRESH_TOKEN);
     }
 
     public String generateAccessToken(Long id) {
-        return generateToken(id, config.getAccessExpiration());
+        return generateToken(id, config.getAccessExpiration(), TokenType.ACCESS_TOKEN);
     }
 
-    public String generateToken(Long id, long expiration) {
+    public String generateToken(Long id, long expiration, TokenType type) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("random", new Random().nextLong());
-        claims.put("id", id);
+        claims.put(Constants.RANDOM, new Random().nextLong());
+        claims.put(Constants.ID, id);
+        claims.put(Constants.TYPE, type);
         Date nowDate = new Date();
         Date expirationDate = new Date(nowDate.getTime() + expiration);
         return Jwts.builder()
@@ -47,9 +51,21 @@ public class TokenHelper {
                 .compact();
     }
 
-    public boolean validateToken(Long id, String token) {
-        return id.equals(extractUserId(token)) && !isTokenExpired(token);
+
+    public TokenData parseToken(String token) {
+        Claims body = Jwts.parser().setSigningKey(config.getSecret())
+                .parseClaimsJws(token)
+                .getBody();
+        Long id = Long.parseLong(body.getSubject());
+        Date expiration = body.getExpiration();
+        Object type = body.get(Constants.TYPE);
+        return TokenData.builder()
+                .tokenType(TokenType.ACCESS_TOKEN.name().equals(type) ? TokenType.ACCESS_TOKEN : TokenType.REFRESH_TOKEN)
+                .id(id)
+                .expiration(expiration.before(new Date()))
+                .build();
     }
+
 
     public Long extractUserId(String token) {
         return Long.parseLong(Jwts.parser()
@@ -57,15 +73,6 @@ public class TokenHelper {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject());
-    }
-
-    public boolean isTokenExpired(String token) {
-        Date expiration = Jwts.parser()
-                .setSigningKey(config.getSecret())
-                .parseClaimsJws(token)
-                .getBody()
-                .getExpiration();
-        return expiration.before(new Date());
     }
 
 

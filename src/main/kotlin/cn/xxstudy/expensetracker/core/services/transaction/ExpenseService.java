@@ -24,15 +24,16 @@ public class ExpenseService extends ServiceImpl<ExpenseMapper, TransactionExpens
     private final ExpenseMapper mapper;
     private final TokenHelper tokenHelper;
 
-    public ExpenseService(ExpenseMapper mapper,TokenHelper tokenHelper) {
+    public ExpenseService(ExpenseMapper mapper, TokenHelper tokenHelper) {
         this.mapper = mapper;
         this.tokenHelper = tokenHelper;
     }
 
     @Override
-    public TransactionExpense recordOrUpdate(HttpServletRequest request,TransactionExpense value) {
+    public TransactionExpense recordOrUpdate(HttpServletRequest request, TransactionExpense value) {
         Long id = tokenHelper.extractUserId(request.getHeader(Constants.AUTHORIZATION));
-        if (id.equals(value.getUserId()) && _recordOrUpdate(value, value.getId())) {
+        value.setUserId(id);
+        if (_recordOrUpdate(value, value.getId())) {
             return mapper.selectById(value.getId());
         }
         return null;
@@ -44,7 +45,7 @@ public class ExpenseService extends ServiceImpl<ExpenseMapper, TransactionExpens
     }
 
     @Override
-    public List<TransactionExpense> queryList(HttpServletRequest request,int page, int size) {
+    public List<TransactionExpense> queryList(HttpServletRequest request, int page, int size) {
         Long id = tokenHelper.extractUserId(request.getHeader(Constants.AUTHORIZATION));
         LambdaQueryWrapper<TransactionExpense> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(TransactionExpense::getUserId, id);

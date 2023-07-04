@@ -27,13 +27,14 @@ public class IncomeService extends ServiceImpl<IncomeMapper, TransactionIncome> 
 
     public IncomeService(IncomeMapper mapper, TokenHelper tokenHelper) {
         this.mapper = mapper;
-        this.tokenHelper=tokenHelper;
+        this.tokenHelper = tokenHelper;
     }
 
     @Override
-    public TransactionIncome recordOrUpdate(HttpServletRequest request,TransactionIncome value) {
+    public TransactionIncome recordOrUpdate(HttpServletRequest request, TransactionIncome value) {
         Long id = tokenHelper.extractUserId(request.getHeader(Constants.AUTHORIZATION));
-        if (id.equals(value.getUserId()) && _recordOrUpdate(value, value.getId())) {
+        value.setUserId(id);
+        if (_recordOrUpdate(value, value.getId())) {
             return mapper.selectById(value.getId());
         }
         return null;
@@ -54,7 +55,7 @@ public class IncomeService extends ServiceImpl<IncomeMapper, TransactionIncome> 
     }
 
     @Override
-    public List<TransactionIncome> queryListByDate(HttpServletRequest request,String date) {
+    public List<TransactionIncome> queryListByDate(HttpServletRequest request, String date) {
         date = String.format("%s %s", date, "00:00:00");
         if (!DateUtils.isValidDateTime(date)) {
             throw new FormatException();
