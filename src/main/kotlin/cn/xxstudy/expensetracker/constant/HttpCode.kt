@@ -8,4 +8,5 @@ enum class HttpCode(val code: Int, val message: String) {
     FORMAT_ERROR(-10004, "格式错误"),
     TOKEN_ERROR(-10005, "Token验证失败"),
     REFRESH_TOKEN_ERROR(-10006, "请重新登陆"),
+    ID_ERROR(-10007, "ID不存在"),
 }

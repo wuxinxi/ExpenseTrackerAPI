@@ -22,6 +22,10 @@ public class Response<T> {
         return new Response<T>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), data);
     }
 
+    public static <T> Response<T> success() {
+        return new Response<T>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), null);
+    }
+
     public static <T> Response<T> failed(int code, String msg) {
         return new Response<>(code, msg, null);
     }
