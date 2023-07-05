@@ -9,13 +9,16 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/expensetracker?characterEncoding=utf-8&useSSL=false
     username: root
-    password: 1234
+    password: root123456
+  servlet:
+    multipart:
+      location: upload
 
 
 jwt:
   secret: test-cnda-secret
-  accessExpiration: 100
-  refreshExpiration: 300
+  accessExpiration: 3600
+  refreshExpiration: 36000
 
 
 mybatis-plus:

@@ -59,15 +59,15 @@ public class CategoryService extends ServiceImpl<CategoryMapper, Category> imple
         LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Category::getId, id);
         Category category = categoryMapper.selectOne(queryWrapper);
-        if (category==null) return  null;
+        if (category == null) return null;
         String oldImageUrl = category.getCategoryIconUrl();
         String newImageUrl = ImageUploadHelper.upload(request, icon, userId.toString(), 100_000, 300);
-        if(newImageUrl != null){
+        if (newImageUrl != null) {
             category.setCategoryIconUrl(newImageUrl);
         }
         category.setCategoryName(name);
         boolean update = updateById(category);
-        if (update){
+        if (update) {
             ImageUploadHelper.deleteOldImage(userId.toString(), oldImageUrl, newImageUrl);
         }
         return update ? category : null;

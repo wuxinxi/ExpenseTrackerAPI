@@ -35,23 +35,23 @@ public class CategoryController {
 
     @DeleteMapping("/category")
     @TokenRequired
-    public Response deleteCategory(HttpServletRequest request, @RequestParam @Valid Long id){
+    public Response deleteCategory(HttpServletRequest request, @RequestParam @Valid Long id) {
         boolean delete = service.deleteCategory(request, id);
-        return  delete ? Response.success() : Response.failed(HttpCode.ID_ERROR);
+        return delete ? Response.success() : Response.failed(HttpCode.ID_ERROR);
     }
 
     @PatchMapping("/category")
     @TokenRequired
-    public Response<Category> updateCategory(HttpServletRequest request, @RequestParam(required = false) @Valid MultipartFile icon, @RequestParam String name,Long id){
+    public Response<Category> updateCategory(HttpServletRequest request, @RequestParam(required = false) @Valid MultipartFile icon, @RequestParam String name, Long id) {
         Category response = service.updateCategory(request, icon, name, id);
-        return  Optional.ofNullable(response)
+        return Optional.ofNullable(response)
                 .map(Response::success)
                 .orElse(Response.failed(HttpCode.ID_ERROR));
     }
 
     @GetMapping("/category")
     @TokenRequired
-    public Response<List<Category>>queryCategory(HttpServletRequest request){
+    public Response<List<Category>> queryCategory(HttpServletRequest request) {
         return Response.success(service.queryCategoryList(request));
     }
 
