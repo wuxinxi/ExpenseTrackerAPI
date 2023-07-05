@@ -26,6 +26,12 @@ public class DateUtils {
         return formatter.format(now);
     }
 
+    public static LocalDateTime convertStartOfDay(String dateValue) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+        LocalDate date = LocalDate.parse(dateValue, formatter);
+        return date.atStartOfDay();
+    }
+
     public static LocalDateTime min(String date) {
         return min(date, DEFAULT_FORMAT);
     }
@@ -44,8 +50,9 @@ public class DateUtils {
         return LocalDateTime.of(localDate, LocalTime.MAX);
     }
 
+
     public static boolean isValidDateTime(String dateTimeString) {
-        String pattern = "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$";
+        String pattern = "^\\d{4}-\\d{2}-\\d{2}$";
         return Pattern.matches(pattern, dateTimeString);
     }
 

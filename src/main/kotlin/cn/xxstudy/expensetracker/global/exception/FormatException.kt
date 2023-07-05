@@ -7,4 +7,4 @@ import cn.xxstudy.expensetracker.constant.HttpCode
  * @author: LovelyCoder
  * @remark:
  */
-class FormatException() : AppException(HttpCode.FORMAT_ERROR.code, HttpCode.FORMAT_ERROR.message)
+class FormatException : AppException(HttpCode.FORMAT_ERROR.code, HttpCode.FORMAT_ERROR.message)

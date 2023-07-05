@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -56,13 +57,13 @@ public class IncomeService extends ServiceImpl<IncomeMapper, TransactionIncome> 
 
     @Override
     public List<TransactionIncome> queryListByDate(HttpServletRequest request, String date) {
-        date = String.format("%s %s", date, "00:00:00");
         if (!DateUtils.isValidDateTime(date)) {
             throw new FormatException();
         }
+        LocalDate dateTime = LocalDate.of(2023, 7, 4);
         Long id = tokenHelper.extractUserId(request.getHeader(Constants.AUTHORIZATION));
-        LambdaQueryWrapper<TransactionIncome> queryWrapper
-                = createQueryWrapper(date, TransactionIncome::getUserId, id, TransactionIncome::getIncomeCreateDate);
+        LambdaQueryWrapper<TransactionIncome> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(TransactionIncome::getUserId, id).eq(TransactionIncome::getIncomeDate, dateTime);
         return mapper.selectList(queryWrapper);
     }
 }

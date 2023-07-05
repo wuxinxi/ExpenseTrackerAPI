@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -55,13 +56,13 @@ public class ExpenseService extends ServiceImpl<ExpenseMapper, TransactionExpens
 
     @Override
     public List<TransactionExpense> queryListByDate(HttpServletRequest request, String date) {
-        date = String.format("%s %s", date, "00:00:00");
         if (!DateUtils.isValidDateTime(date)) {
             throw new FormatException();
         }
+        LocalDateTime dateTime = DateUtils.convertStartOfDay(date);
         Long id = tokenHelper.extractUserId(request.getHeader(Constants.AUTHORIZATION));
-        LambdaQueryWrapper<TransactionExpense> queryWrapper
-                = createQueryWrapper(date, TransactionExpense::getUserId, id, TransactionExpense::getExpenseCreateDate);
+        LambdaQueryWrapper<TransactionExpense> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(TransactionExpense::getUserId, id).eq(TransactionExpense::getExpenseDate, dateTime);
         return mapper.selectList(queryWrapper);
     }
 

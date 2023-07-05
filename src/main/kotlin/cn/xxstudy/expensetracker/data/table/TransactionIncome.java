@@ -8,6 +8,7 @@ public class TransactionIncome {
     private Long userId;
     private double incomeAmount;
     private Long categoryId;
+    private String incomeDate;
     private String incomeCreateDate;
     private String incomeUpdateDate;
     private Long memberId;

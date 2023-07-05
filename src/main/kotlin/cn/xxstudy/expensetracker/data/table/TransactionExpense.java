@@ -8,6 +8,7 @@ public class TransactionExpense {
     private Long userId;
     private double expenseAmount;
     private Long categoryId;
+    private String expenseDate;
     private String expenseCreateDate;
     private String expenseUpdateDate;
     private Long memberId;

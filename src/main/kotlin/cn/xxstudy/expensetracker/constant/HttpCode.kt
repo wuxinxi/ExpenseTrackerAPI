@@ -9,4 +9,6 @@ enum class HttpCode(val code: Int, val message: String) {
     TOKEN_ERROR(-10005, "Token验证失败"),
     REFRESH_TOKEN_ERROR(-10006, "请重新登陆"),
     ID_ERROR(-10007, "ID不存在"),
+    CATEGORY_ERROR(-10008, "分类已存在"),
+    MEMBER_ERROR(-10008, "成员已存在"),
 }

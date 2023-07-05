@@ -28,21 +28,21 @@ public class MemberController {
 
     @PostMapping("/member")
     @TokenRequired
-    public Response<Member> addCategory(HttpServletRequest request, @RequestParam(required = false) @Valid MultipartFile icon, @RequestParam String name) {
+    public Response<Member> addMember(HttpServletRequest request, @RequestParam(required = false) @Valid MultipartFile icon, @RequestParam String name) {
         Member member = service.addMember(request, icon, name);
         return Response.success(member);
     }
 
     @DeleteMapping("/member")
     @TokenRequired
-    public Response deleteCategory(HttpServletRequest request, @RequestParam @Valid Long id) {
+    public Response deleteMember(HttpServletRequest request, @RequestParam @Valid Long id) {
         boolean delete = service.deleteMember(request, id);
         return delete ? Response.success() : Response.failed(HttpCode.ID_ERROR);
     }
 
     @PatchMapping("/member")
     @TokenRequired
-    public Response<Member> updateCategory(HttpServletRequest request, @RequestParam(required = false) @Valid MultipartFile icon, @RequestParam String name, Long id) {
+    public Response<Member> updateMember(HttpServletRequest request, @RequestParam(required = false) @Valid MultipartFile icon, @RequestParam String name, Long id) {
         Member response = service.updateMember(request, icon, name, id);
         return Optional.ofNullable(response)
                 .map(Response::success)
@@ -51,7 +51,7 @@ public class MemberController {
 
     @GetMapping("/member")
     @TokenRequired
-    public Response<List<Member>> queryCategory(HttpServletRequest request) {
+    public Response<List<Member>> queryMember(HttpServletRequest request) {
         return Response.success(service.queryMemberList(request));
     }
 

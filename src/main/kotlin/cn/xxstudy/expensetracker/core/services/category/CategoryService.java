@@ -1,8 +1,10 @@
 package cn.xxstudy.expensetracker.core.services.category;
 
 import cn.xxstudy.expensetracker.constant.Constants;
+import cn.xxstudy.expensetracker.constant.HttpCode;
 import cn.xxstudy.expensetracker.core.mapper.CategoryMapper;
 import cn.xxstudy.expensetracker.data.table.Category;
+import cn.xxstudy.expensetracker.global.exception.AppException;
 import cn.xxstudy.expensetracker.utils.ImageUploadHelper;
 import cn.xxstudy.expensetracker.utils.TokenHelper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -36,6 +38,11 @@ public class CategoryService extends ServiceImpl<CategoryMapper, Category> imple
     @Override
     public Category addCategory(HttpServletRequest request, MultipartFile icon, @RequestParam String name) {
         Long userId = tokenHelper.extractUserId(request.getHeader(Constants.AUTHORIZATION));
+        LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Category::getUserId, userId).eq(Category::getCategoryName, name);
+        if (categoryMapper.exists(queryWrapper)) {
+            throw new AppException(HttpCode.CATEGORY_ERROR);
+        }
         String imageUrl = ImageUploadHelper.upload(request, icon, userId.toString(), 100_000, 300);
         Category category = Category.builder()
                 .userId(userId)
