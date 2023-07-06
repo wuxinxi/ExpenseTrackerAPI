@@ -49,9 +49,9 @@ public class TransactionController {
 
     @GetMapping("/query/date/income")
     @TokenRequired
-    Response<List<TransactionExpense>> queryIncomeListByDate(HttpServletRequest request,
+    Response<List<TransactionIncome>> queryIncomeListByDate(HttpServletRequest request,
                                                              @RequestParam String date) {
-        return Response.success(expenseService.queryListByDate(request, date));
+        return Response.success(incomeService.queryListByDate(request, date));
     }
 
 
