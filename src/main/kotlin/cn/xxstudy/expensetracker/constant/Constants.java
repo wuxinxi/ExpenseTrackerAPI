@@ -16,5 +16,11 @@ public class Constants {
 
     public static final String UPLOAD = "upload/";
 
+    public static final String PROPORTION = "proportion";
+    public static final String TOTAL = "total";
+    public static final String COUNT = "count";
+    public static final String BY_CATEGORY = "byCategory";
+    public static final String BY_MEMBER = "byMember";
+
 
 }
