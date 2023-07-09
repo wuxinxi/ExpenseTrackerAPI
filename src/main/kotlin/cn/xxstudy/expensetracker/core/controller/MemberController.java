@@ -1,7 +1,7 @@
 package cn.xxstudy.expensetracker.core.controller;
 
 import cn.xxstudy.expensetracker.annotation.TokenRequired;
-import cn.xxstudy.expensetracker.constant.HttpCode;
+import cn.xxstudy.expensetracker.constant.ErrorCode;
 import cn.xxstudy.expensetracker.core.services.member.MemberService;
 import cn.xxstudy.expensetracker.data.Response;
 import cn.xxstudy.expensetracker.data.table.Member;
@@ -37,7 +37,7 @@ public class MemberController {
     @TokenRequired
     public Response deleteMember(HttpServletRequest request, @RequestParam @Valid Long id) {
         boolean delete = service.deleteMember(request, id);
-        return delete ? Response.success() : Response.failed(HttpCode.ID_ERROR);
+        return delete ? Response.success() : Response.failed(ErrorCode.ID_ERROR);
     }
 
     @PatchMapping("/member")
@@ -46,7 +46,7 @@ public class MemberController {
         Member response = service.updateMember(request, icon, name, id);
         return Optional.ofNullable(response)
                 .map(Response::success)
-                .orElse(Response.failed(HttpCode.ID_ERROR));
+                .orElse(Response.failed(ErrorCode.ID_ERROR));
     }
 
     @GetMapping("/member")

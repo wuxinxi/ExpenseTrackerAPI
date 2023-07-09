@@ -1,6 +1,6 @@
 package cn.xxstudy.expensetracker.constant
 
-enum class HttpCode(val code: Int, val message: String) {
+enum class ErrorCode(val code: Int, val message: String) {
     ERROR(-1, "服务器无法处理此请求"),
     LOGIN_ERROR(-10001, "用户名密码错误"),
     REGISTER_ERROR(-10002, "注册邮箱已存在"),
@@ -11,4 +11,5 @@ enum class HttpCode(val code: Int, val message: String) {
     ID_ERROR(-10007, "ID不存在"),
     CATEGORY_ERROR(-10008, "分类已存在"),
     MEMBER_ERROR(-10008, "成员已存在"),
+    MAIL_ERROR(-10009, "邮件发送失败，请检查邮箱地址是否正确"),
 }

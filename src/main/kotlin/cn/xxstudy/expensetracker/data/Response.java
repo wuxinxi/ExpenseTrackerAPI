@@ -1,6 +1,6 @@
 package cn.xxstudy.expensetracker.data;
 
-import cn.xxstudy.expensetracker.constant.HttpCode;
+import cn.xxstudy.expensetracker.constant.ErrorCode;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpStatus;
 
@@ -30,8 +30,8 @@ public class Response<T> {
         return new Response<>(code, msg, null);
     }
 
-    public static <T> Response<T> failed(HttpCode httpCode) {
-        return new Response<>(httpCode.getCode(), httpCode.getMessage(), null);
+    public static <T> Response<T> failed(ErrorCode errorCode) {
+        return new Response<>(errorCode.getCode(), errorCode.getMessage(), null);
     }
 
 

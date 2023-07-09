@@ -50,10 +50,13 @@ public class DateUtils {
         return LocalDateTime.of(localDate, LocalTime.MAX);
     }
 
+    public static String convertDateTime(LocalDateTime localDateTime) {
+        return localDateTime.format(DateTimeFormatter.ofPattern(DEFAULT_FORMAT));
+    }
 
     public static boolean isValidDateTime(String dateTimeString) {
         String pattern = "^\\d{4}-\\d{2}-\\d{2}$";
-        return Pattern.matches(pattern, dateTimeString);
+        return !Pattern.matches(pattern, dateTimeString);
     }
 
 }

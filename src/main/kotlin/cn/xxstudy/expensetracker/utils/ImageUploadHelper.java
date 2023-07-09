@@ -1,6 +1,6 @@
 package cn.xxstudy.expensetracker.utils;
 
-import cn.xxstudy.expensetracker.constant.HttpCode;
+import cn.xxstudy.expensetracker.constant.ErrorCode;
 import cn.xxstudy.expensetracker.global.exception.AppException;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.boot.system.ApplicationHome;
@@ -56,16 +56,16 @@ public class ImageUploadHelper {
 
     public static byte[] check(MultipartFile file, int maxSize, int maxPixel) throws Exception {
         if (file.getContentType() == null || !file.getContentType().startsWith("image/")) {
-            throw new AppException(HttpCode.ERROR.getCode(), "图片文件格式错误");
+            throw new AppException(ErrorCode.ERROR.getCode(), "图片文件格式错误");
         }
         if (file.getSize() > maxSize) {
-            throw new AppException(HttpCode.ERROR.getCode(), String.format("icon大小不能超过%dKB",maxSize/1000));
+            throw new AppException(ErrorCode.ERROR.getCode(), String.format("icon大小不能超过%dKB",maxSize/1000));
         }
 
         byte[] fileBytes = file.getBytes();
         BufferedImage image = ImageIO.read(new ByteArrayInputStream(fileBytes));
         if (image.getWidth() > maxPixel || image.getHeight() > maxPixel) {
-            throw new AppException(HttpCode.ERROR.getCode(), String.format("图片尺寸不能超过%d*%d像素",maxPixel,maxPixel));
+            throw new AppException(ErrorCode.ERROR.getCode(), String.format("图片尺寸不能超过%d*%d像素",maxPixel,maxPixel));
         }
         return fileBytes;
     }

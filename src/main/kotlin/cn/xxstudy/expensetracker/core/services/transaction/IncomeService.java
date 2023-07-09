@@ -56,7 +56,7 @@ public class IncomeService extends ServiceImpl<IncomeMapper, TransactionIncome> 
 
     @Override
     public List<TransactionIncome> queryListByDate(HttpServletRequest request, String date) {
-        if (!DateUtils.isValidDateTime(date)) {
+        if (DateUtils.isValidDateTime(date)) {
             throw new FormatException();
         }
         Long id = tokenHelper.extractUserId(request.getHeader(Constants.AUTHORIZATION));

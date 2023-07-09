@@ -1,7 +1,7 @@
 package cn.xxstudy.expensetracker.core.services.user;
 
 import cn.xxstudy.expensetracker.constant.Constants;
-import cn.xxstudy.expensetracker.constant.HttpCode;
+import cn.xxstudy.expensetracker.constant.ErrorCode;
 import cn.xxstudy.expensetracker.core.mapper.UserMapper;
 import cn.xxstudy.expensetracker.data.bean.TokenData;
 import cn.xxstudy.expensetracker.data.model.RequestLoginModel;
@@ -9,6 +9,7 @@ import cn.xxstudy.expensetracker.data.model.RequestUserModel;
 import cn.xxstudy.expensetracker.data.model.ResponseUserModel;
 import cn.xxstudy.expensetracker.data.model.Token;
 import cn.xxstudy.expensetracker.data.table.User;
+import cn.xxstudy.expensetracker.global.exception.AppException;
 import cn.xxstudy.expensetracker.global.exception.TokenException;
 import cn.xxstudy.expensetracker.utils.TokenHelper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -69,17 +70,28 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IUserS
         String authorization = request.getHeader(Constants.AUTHORIZATION);
         if (StringUtils.isBlank(authorization)) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            throw new TokenException(HttpCode.TOKEN_ERROR.getCode(), "缺少Authorization请求头");
+            throw new TokenException(ErrorCode.TOKEN_ERROR.getCode(), "缺少Authorization请求头");
         }
         TokenData tokenData;
         try {
             tokenData = tokenHelper.parseToken(authorization);
         } catch (ExpiredJwtException e) {
-            throw new TokenException(HttpCode.REFRESH_TOKEN_ERROR.getCode(), HttpCode.REFRESH_TOKEN_ERROR.getMessage());
+            throw new TokenException(ErrorCode.REFRESH_TOKEN_ERROR.getCode(), ErrorCode.REFRESH_TOKEN_ERROR.getMessage());
         }
         return Optional.of(tokenData)
                 .filter(TokenData::isValidRefreshToken)
                 .map(data -> tokenHelper.generateAccessToken(data.getId()))
-                .orElseThrow(() -> new TokenException(HttpCode.REFRESH_TOKEN_ERROR.getCode(), HttpCode.REFRESH_TOKEN_ERROR.getMessage()));
+                .orElseThrow(() -> new TokenException(ErrorCode.REFRESH_TOKEN_ERROR.getCode(), ErrorCode.REFRESH_TOKEN_ERROR.getMessage()));
+    }
+
+    @Override
+    public boolean hasThrow(String email) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getUserEmail, email);
+        boolean exists = userMapper.exists(queryWrapper);
+        if (exists) {
+            throw new AppException(ErrorCode.REGISTER_ERROR);
+        }
+        return false;
     }
 }

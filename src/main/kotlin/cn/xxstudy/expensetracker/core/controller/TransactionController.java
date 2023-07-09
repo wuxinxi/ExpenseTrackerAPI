@@ -1,7 +1,7 @@
 package cn.xxstudy.expensetracker.core.controller;
 
 import cn.xxstudy.expensetracker.annotation.TokenRequired;
-import cn.xxstudy.expensetracker.constant.HttpCode;
+import cn.xxstudy.expensetracker.constant.ErrorCode;
 import cn.xxstudy.expensetracker.core.services.transaction.ExpenseService;
 import cn.xxstudy.expensetracker.core.services.transaction.IncomeService;
 import cn.xxstudy.expensetracker.data.Response;
@@ -36,7 +36,7 @@ public class TransactionController {
         TransactionIncome response = incomeService.recordOrUpdate(request, income);
         return Optional.ofNullable(response)
                 .map(Response::success)
-                .orElse(Response.failed(HttpCode.RECORD_ERROR));
+                .orElse(Response.failed(ErrorCode.RECORD_ERROR));
     }
 
     @GetMapping("/query/income")
@@ -62,7 +62,7 @@ public class TransactionController {
         TransactionExpense response = expenseService.recordOrUpdate(request, income);
         return Optional.ofNullable(response)
                 .map(Response::success)
-                .orElse(Response.failed(HttpCode.RECORD_ERROR));
+                .orElse(Response.failed(ErrorCode.RECORD_ERROR));
     }
 
     @GetMapping("/query/expense")

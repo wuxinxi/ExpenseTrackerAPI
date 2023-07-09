@@ -1,7 +1,7 @@
 package cn.xxstudy.expensetracker.core.services.member;
 
 import cn.xxstudy.expensetracker.constant.Constants;
-import cn.xxstudy.expensetracker.constant.HttpCode;
+import cn.xxstudy.expensetracker.constant.ErrorCode;
 import cn.xxstudy.expensetracker.core.mapper.MemberMapper;
 import cn.xxstudy.expensetracker.data.table.Member;
 import cn.xxstudy.expensetracker.global.exception.AppException;
@@ -40,7 +40,7 @@ public class MemberService extends ServiceImpl<MemberMapper, Member> implements 
         LambdaQueryWrapper<Member> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Member::getUserId, userId).eq(Member::getMemberName, name);
         if (memberMapper.exists(queryWrapper)) {
-            throw new AppException(HttpCode.MEMBER_ERROR);
+            throw new AppException(ErrorCode.MEMBER_ERROR);
         }
         String imageUrl = ImageUploadHelper.upload(request, icon, userId.toString(), 100_000, 500);
         Member member = Member.builder()
