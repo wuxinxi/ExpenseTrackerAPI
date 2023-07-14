@@ -70,7 +70,7 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IUserS
         String authorization = request.getHeader(Constants.AUTHORIZATION);
         if (StringUtils.isBlank(authorization)) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            throw new TokenException(ErrorCode.TOKEN_ERROR.getCode(), "缺少Authorization请求头");
+            throw new TokenException(ErrorCode.TOKEN_INVALID.getCode(), ErrorCode.TOKEN_INVALID.getMessage());
         }
         TokenData tokenData;
         try {
