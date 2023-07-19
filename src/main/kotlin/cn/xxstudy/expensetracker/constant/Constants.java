@@ -22,5 +22,9 @@ public class Constants {
     public static final String BY_CATEGORY = "byCategory";
     public static final String BY_MEMBER = "byMember";
 
+    public static final int INCOME = 0;
+
+    public static final int EXPENSE = 1;
+
 
 }

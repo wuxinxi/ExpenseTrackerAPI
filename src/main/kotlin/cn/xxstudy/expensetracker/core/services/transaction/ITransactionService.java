@@ -1,9 +1,10 @@
 package cn.xxstudy.expensetracker.core.services.transaction;
 
+import cn.xxstudy.expensetracker.data.model.TransactionSummary;
+import cn.xxstudy.expensetracker.data.table.Transaction;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -11,17 +12,14 @@ import java.util.Objects;
  * @author: LovelyCoder
  * @remark:
  */
-public interface ITransaction<T> extends IService<T> {
-    T recordOrUpdate(HttpServletRequest request, T value);
+public interface ITransactionService extends IService<Transaction> {
+    Transaction recordOrUpdate(HttpServletRequest request, Transaction value);
 
-    void updateProperty(T value);
+    void updateProperty(Transaction value);
 
-    List<T> queryList(HttpServletRequest request,int page, int size);
+    TransactionSummary queryListByMonthYear(HttpServletRequest request, String monthYear);
 
-    //当天yyyy-MM-dd
-    List<T> queryListByDate(HttpServletRequest request,String date);
-
-    default boolean _recordOrUpdate(T value, Long id) {
+    default boolean _recordOrUpdate(Transaction value, Long id) {
         boolean result;
         if (!Objects.isNull(this.getById(id))) {
             updateProperty(value);

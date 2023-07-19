@@ -58,6 +58,10 @@ public class DateUtils {
         String pattern = "^\\d{4}-\\d{2}-\\d{2}$";
         return !Pattern.matches(pattern, dateTimeString);
     }
+    public static boolean isValidMonthTime(String dateTimeString) {
+        String pattern = "^\\d{4}-\\d{2}$";
+        return !Pattern.matches(pattern, dateTimeString);
+    }
 
 }
 
